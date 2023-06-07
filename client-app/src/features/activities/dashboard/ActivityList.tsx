@@ -11,6 +11,7 @@ interface Props {
 
 export default function ActivityList({activities, selectActivity, deleteActivity, submitting}: Props) {
     const [target, setTarget] = useState('');
+    const [secondOpen, setSecondOpen] = React.useState(false)
 
     function handleActivityDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
@@ -59,10 +60,23 @@ export default function ActivityList({activities, selectActivity, deleteActivity
                                     actions={
                                         [
                                             { key: 'deny', content: 'No', negative: true },
-                                            { key: 'confirm', content: 'Yes', positive: true, onClick:(e:any) => {handleActivityDelete(e, activity.id)} },
+                                            { key: 'confirm', content: 'Yes', positive: true, onClick:(e:any) => {handleActivityDelete(e, activity.id), setSecondOpen(true)} },
                                         ]
                                     }
                                 />
+                                <Modal
+                                    onClose={() => setSecondOpen(false)}
+                                    open={secondOpen}
+                                    size='mini'
+                                >
+                                    <Modal.Header style={{textAlign: 'center'}}>Event has been deleted.</Modal.Header>
+                                    <Modal.Actions>
+                                        <Button
+                                            icon='check'
+                                            onClick={() => setSecondOpen(false)}
+                                        />
+                                    </Modal.Actions>
+                                </Modal>
                                 <Label basic content={activity.category} />
                             </Item.Extra>
                         </Item.Content>

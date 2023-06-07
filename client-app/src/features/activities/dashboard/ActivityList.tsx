@@ -1,5 +1,5 @@
 import React, { useState, SyntheticEvent } from 'react';
-import { Button, Header, Icon, Item, Label, Modal, Segment } from 'semantic-ui-react';
+import { Button, Header, Icon, Item, Image, Label, Modal, Segment } from 'semantic-ui-react';
 import { Activity } from '../../../app/models/activity';
 
 interface Props {
@@ -11,7 +11,6 @@ interface Props {
 
 export default function ActivityList({activities, selectActivity, deleteActivity, submitting}: Props) {
     const [target, setTarget] = useState('');
-    const [open, setOpen] = React.useState(false)
 
     function handleActivityDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
@@ -34,11 +33,6 @@ export default function ActivityList({activities, selectActivity, deleteActivity
                             <Item.Extra>
                                 <Button onClick={() => selectActivity(activity.id)} floated='right' content='View' color='blue' />
                                 <Modal
-                                    basic
-                                    onClose={() => setOpen(false)}
-                                    onOpen={() => setOpen(true)}
-                                    open={open}
-                                    size='small'
                                     trigger={<Button
                                         name={activity.id}
                                         loading={submitting && target == activity.id}
@@ -46,26 +40,29 @@ export default function ActivityList({activities, selectActivity, deleteActivity
                                         content='Delete'
                                         color='red'
                                     />}
-                                    >
-                                    <Header icon>
-                                        <Icon name='archive' />
-                                        Archive Old Messages
-                                    </Header>
-                                    <Modal.Content>
-                                        <p>
-                                        Your inbox is getting full, would you like us to enable automatic
-                                        archiving of old messages?
+                                    header={
+                                        <Header icon>
+                                            <Icon name='trash alternate outline' />
+                                            Are you sure that you want to delete the following event?
+                                        </Header>
+                                    }
+                                    content={
+                                        <p style={{paddingLeft: '5%', paddingTop: '2%', paddingBottom: '.75%'}}>
+                                            <b>Title:</b> {activity.title}<br/>
+                                            <b>Category:</b> {activity.category}<br/>
+                                            <b>Address:</b> {activity.address}<br/>
+                                            <b>Description:</b> {activity.description}<br/>
+                                            <b>Start Date and Time:</b> {activity.startDateTime}<br/>
+                                            <b>End Date and Time:</b> {activity.endDateTime}<br/>
                                         </p>
-                                    </Modal.Content>
-                                    <Modal.Actions>
-                                        <Button basic color='red' inverted onClick={() => setOpen(false)}>
-                                        <Icon name='remove' /> No
-                                        </Button>
-                                        <Button color='green' inverted onClick={(e) => {handleActivityDelete(e, activity.id); setOpen(false) }}>
-                                        <Icon name='checkmark' /> Yes
-                                        </Button>
-                                    </Modal.Actions>
-                                </Modal>
+                                    }
+                                    actions={
+                                        [
+                                            { key: 'deny', content: 'No', negative: true },
+                                            { key: 'confirm', content: 'Yes', positive: true, onClick:(e:any) => {handleActivityDelete(e, activity.id)} },
+                                        ]
+                                    }
+                                />
                                 <Label basic content={activity.category} />
                             </Item.Extra>
                         </Item.Content>
